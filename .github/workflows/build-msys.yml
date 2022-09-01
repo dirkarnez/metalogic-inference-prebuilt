@@ -1,0 +1,52 @@
+name: msys-prebuilt-release-actions-workflow
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'c*'
+jobs:
+  build:
+    name: Create Release
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: msys2 {0}
+    env:
+      libraryName: metalogic-inference
+      installationPath: metalogic-inference-installation
+      # tagName: v4.1.4
+      msysTargetZip: metalogic-inference-${{ github.ref_name }}-msys.zip
+    steps:
+      - name: git clone
+        shell: cmd
+        run: git clone --recursive git://git.savannah.gnu.org/metalogic-inference.git && cd metalogic-inference # && git checkout ${{ env.tagName }}
+        
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: git mingw-w64-x86_64-toolchain make autoconf automake libtool
+          
+      - name: Configure
+        run: cd metalogic-inference && automake --add-missing && ./configure --prefix="${{ github.workspace }}/${{ env.installationPath }}"
+          
+      - name: Build
+        run: cd metalogic-inference && make -j 8 all
+        
+      - name: Install
+        run: cd metalogic-inference && make install
+        
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: "${{ github.workspace }}/${{ env.installationPath }}"
+          filename: "${{ env.msysTargetZip }}"
+        
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ github.workspace }}/${{ env.installationPath }}/${{ env.msysTargetZip }}"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}

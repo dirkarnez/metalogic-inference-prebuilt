@@ -32,7 +32,7 @@ jobs:
         run: cd metalogic-inference && automake --add-missing && ./configure --prefix="$HOME/${{ env.installationPath }}"
           
       - name: Build
-        run: cd metalogic-inference && make -j 8 all
+        run: cd metalogic-inference && make
         
       - name: Install
         run: cd metalogic-inference && make install

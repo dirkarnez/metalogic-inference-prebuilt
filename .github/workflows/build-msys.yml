@@ -29,7 +29,7 @@ jobs:
           install: git mingw-w64-x86_64-toolchain make autoconf automake libtool mingw-w64-x86_64-gc
           
       - name: Configure
-        run: cd metalogic-inference && automake --add-missing && ./configure --prefix="${{ github.workspace }}/${{ env.installationPath }}"
+        run: cd metalogic-inference && automake --add-missing && ./configure --prefix="$HOME/${{ env.installationPath }}"
           
       - name: Build
         run: cd metalogic-inference && make -j 8 all
@@ -41,12 +41,12 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          directory: "${{ github.workspace }}/${{ env.installationPath }}"
+          directory: "$HOME/${{ env.installationPath }}"
           filename: "${{ env.msysTargetZip }}"
         
       - name: Release prebuilt
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "${{ github.workspace }}/${{ env.installationPath }}/${{ env.msysTargetZip }}"
+          artifacts: "$HOME/${{ env.installationPath }}/${{ env.msysTargetZip }}"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -26,7 +26,7 @@ jobs:
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
-          install: git mingw-w64-x86_64-toolchain make autoconf automake libtool autogen shtool mingw-w64-x86_64-gc
+          install: git mingw-w64-x86_64-toolchain make autoconf automake libtool autogen mingw-w64-x86_64-gc
           
       - name: Configure
         run: cd metalogic-inference && autoreconf -i && ./configure --prefix="$HOME/${{ env.installationPath }}"

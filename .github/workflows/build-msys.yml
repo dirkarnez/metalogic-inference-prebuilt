@@ -29,7 +29,7 @@ jobs:
           install: git mingw-w64-x86_64-toolchain make autoconf automake libtool mingw-w64-x86_64-gc
           
       - name: Configure
-        run: cd metalogic-inference && automake --add-missing && ./configure --prefix="$HOME/${{ env.installationPath }}"
+        run: cd metalogic-inference && ./configure --prefix="$HOME/${{ env.installationPath }}"
           
       - name: Build
         run: cd metalogic-inference && make
